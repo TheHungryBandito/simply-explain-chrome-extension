@@ -278,6 +278,7 @@ async function handleTextToSpeech(text) {
       })
       .then(async (syncStorage) => {
         if (!syncStorage.TTSEnabled) {
+          iconSpinner.stop();
           return;
         }
         if (syncStorage.TTS == 'tts-1' || syncStorage.TTS == 'tts-1-hd') {
