@@ -1,3 +1,7 @@
+import { IconSpinner } from "./js/icon-spinner.js";
+
+const iconSpinner = new IconSpinner();
+
 /**
  * Creates Commands/Context Menus
  */
@@ -310,6 +314,9 @@ async function openAITextToSpeech(text, model, voice) {
       })
       .catch((err) => {
         console.error('Failed to get OpenAI Text-To-Speech -', err);
+      })
+      .finally(() => {
+        iconSpinner.stop();
       });
 }
 
@@ -321,7 +328,10 @@ async function openAITextToSpeech(text, model, voice) {
 async function chromeTextToSpeech(text) {
   try {
     chrome.tts.stop();
-    return await chrome.tts.speak(text, {'lang': 'en-US'});
+    return await chrome.tts.speak(text, {'lang': 'en-US'})
+    .finally(() => {
+      iconSpinner.stop();
+    });
   } catch (err) {
     console.error('Could not use chrome TTS to speak -', err);
   }
@@ -501,6 +511,7 @@ async function getCompletionResults(text) {
  * @param {string} text The text to process.
  */
 async function processText(text) {
+  iconSpinner.start();
   await getCompletionResults(text).then(async (data) => {
     await updateHistory(text, data.choices[0].message.content);
     await pushNotification({
